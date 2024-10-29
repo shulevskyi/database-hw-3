@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connection settings
-HOST = os.getenv('localhost')
-USER = os.getenv('ecom_user')
-PASSWORD = os.getenv('fifadg13')
-DATABASE = os.getenv('ecommerce_shop')
+HOST = os.getenv('host')
+USER = os.getenv('user')
+PASSWORD = os.getenv('password')
+DATABASE = os.getenv('database')
 
 def create_connection():
     """Create a database connection"""
