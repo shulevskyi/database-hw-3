@@ -45,9 +45,6 @@ def create_connection():
 if __name__ == "__main__":
     create_connection()
 
-if __name__ == "__main__":
-    create_connection()
-
 def execute_query(connection, query, data):
     """Execute a single query"""
     cursor = connection.cursor()
