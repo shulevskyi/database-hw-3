@@ -5,14 +5,26 @@ import os
 from dotenv import load_dotenv
 import random
 
-# Load environment variables
-load_dotenv()
+import mysql.connector
+from mysql.connector import Error
+import uuid
+import os
+from dotenv import load_dotenv
 
-# Connection settings
+# Load environment variables from .env file
+load_dotenv()  # This must be called before accessing os.getenv()
+
+# Connection settings (read from .env file)
 HOST = os.getenv('HOST')
 USER = os.getenv('USER')
 PASSWORD = os.getenv('PASSWORD')
 DATABASE = os.getenv('DATABASE')
+
+# Debugging to check loaded environment variables
+print(f"HOST: {HOST}")
+print(f"USER: {USER}")
+print(f"PASSWORD: {PASSWORD}")
+print(f"DATABASE: {DATABASE}")
 
 def create_connection():
     """Create a database connection"""
@@ -29,6 +41,9 @@ def create_connection():
     except Error as e:
         print(f"The error '{e}' occurred")
         return None
+
+if __name__ == "__main__":
+    create_connection()
 
 def execute_query(connection, query, data):
     """Execute a single query"""

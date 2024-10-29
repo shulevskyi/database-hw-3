@@ -4,3 +4,7 @@ USE ecommerce_shop;
 CREATE USER 'ecom_user'@'localhost' IDENTIFIED BY 'fifadg13';
 GRANT SELECT, INSERT, UPDATE, DELETE ON ecommerce_shop.* TO 'ecom_user'@'localhost';
 FLUSH PRIVILEGES;
+
+
+ALTER USER 'ecom_user'@'localhost' IDENTIFIED BY 'fifadg13';
+FLUSH PRIVILEGES;
