@@ -12,7 +12,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()  # This must be called before accessing os.getenv()
+load_dotenv(override=True)  # This forces loading from .env, overriding existing system environment variables
 
 # Connection settings (read from .env file)
 HOST = os.getenv('HOST')
@@ -41,6 +41,9 @@ def create_connection():
     except Error as e:
         print(f"The error '{e}' occurred")
         return None
+
+if __name__ == "__main__":
+    create_connection()
 
 if __name__ == "__main__":
     create_connection()
