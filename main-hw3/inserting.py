@@ -9,19 +9,19 @@ import random
 load_dotenv()
 
 # Connection settings
-HOST = os.getenv('host')
-USER = os.getenv('user')
-PASSWORD = os.getenv('password')
-DATABASE = os.getenv('database')
+HOST = os.getenv('localhost')
+USER = os.getenv('root')
+PASSWORD = os.getenv('fifadg13')
+DATABASE = os.getenv('ecommerce_shop')
 
 def create_connection():
     """Create a database connection"""
     try:
         connection = mysql.connector.connect(
-            host=localhost,  # Update with your database host
-            user=root,  # Update with your database username
-            password=fifadg13,  # Update with your database password
-            database=ecommerce_shop
+            host=HOST,
+            user=USER,
+            password=PASSWORD,
+            database=DATABASE
         )
         if connection.is_connected():
             print("Connection to MySQL DB successful")
