@@ -83,4 +83,13 @@ ALTER TABLE PRODUCTS MODIFY COLUMN SKU VARCHAR(50) COMMENT 'Unique Stock Keeping
 ALTER TABLE ORDERS COMMENT = 'This table stores information about customer orders';
 ALTER TABLE ORDERS MODIFY COLUMN Status VARCHAR(50) COMMENT 'Order status (e.g., Pending, Shipped, Delivered)';
 
+USE ecommerce_shop;
+DELETE FROM ORDER_ITEMS;
+DELETE FROM SHIPMENTS;    -- Delete all rows in SHIPMENTS table
+DELETE FROM ORDERS;       -- Delete all rows in ORDERS table
+DELETE FROM INVENTORY;    -- Delete all rows in INVENTORY table
+DELETE FROM CUSTOMERS;    -- Delete all rows in CUSTOMERS table
+DELETE FROM PRODUCTS;     -- Delete all rows in PRODUCTS table
+
+
 
