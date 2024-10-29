@@ -46,7 +46,7 @@ def execute_query(connection, query, data):
     except Error as e:
         print(f"The error '{e}' occurred")
 
-def insert_customers(connection, count=1000):
+def insert_customers(connection, count=500000):
     # Inserting data into CUSTOMERS table
     customers_query = """
     INSERT INTO CUSTOMERS (CustomerID, FirstName, LastName, Email, Phone, Address)
@@ -54,7 +54,7 @@ def insert_customers(connection, count=1000):
     """
 
     for i in range(count):
-        email = f"customer_{random.randint(100000, 999999)}@example.com"
+        email = f"customer_{uuid.uuid4().hex}@example.com"  # Using UUID to ensure uniqueness
         data = (
             str(uuid.uuid4()),
             f'CustomerFirstName{i}',
@@ -65,8 +65,87 @@ def insert_customers(connection, count=1000):
         )
         execute_query(connection, customers_query, data)
 
+def insert_orders(connection, customer_ids, count=500000):
+    # Inserting data into ORDERS table
+    orders_query = """
+    INSERT INTO ORDERS (OrderID, CustomerID, Status, TotalAmount)
+    VALUES (%s, %s, %s, %s)
+    """
+    statuses = ['Pending', 'Shipped', 'Delivered', 'Cancelled']
+
+    for i in range(count):
+        customer_id = random.choice(customer_ids)  # Randomly select a customer ID for each order
+        status = random.choice(statuses)
+        total_amount = round(random.uniform(10.0, 500.0), 2)  # Random total amount between $10 and $500
+        data = (
+            str(uuid.uuid4()),
+            customer_id,
+            status,
+            total_amount
+        )
+        execute_query(connection, orders_query, data)
+
+def insert_order_items(connection, order_ids, product_ids, count=500000):
+    # Inserting data into ORDER_ITEMS table
+    order_items_query = """
+    INSERT INTO ORDER_ITEMS (OrderItemID, OrderID, ProductID, Quantity, Price)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    for i in range(count):
+        order_id = random.choice(order_ids)
+        product_id = random.choice(product_ids)
+        quantity = random.randint(1, 10)  # Random quantity between 1 and 10
+        price = round(random.uniform(5.0, 100.0), 2)  # Random price between $5 and $100
+        data = (
+            str(uuid.uuid4()),
+            order_id,
+            product_id,
+            quantity,
+            price
+        )
+        execute_query(connection, order_items_query, data)
+
+def insert_manual_data(connection):
+    # Manually inserting data into PRODUCTS table
+    products_query = """
+    INSERT INTO PRODUCTS (ProductID, ProductName, SKU, Price, StockQuantity)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    products_data = [
+        (str(uuid.uuid4()), 'Product A', 'SKU001', 19.99, 100),
+        (str(uuid.uuid4()), 'Product B', 'SKU002', 29.99, 150),
+        (str(uuid.uuid4()), 'Product C', 'SKU003', 39.99, 200)
+    ]
+    product_ids = []
+    for data in products_data:
+        execute_query(connection, products_query, data)
+        product_ids.append(data[0])
+
+    return product_ids
+
 if __name__ == "__main__":
     connection = create_connection()
     if connection:
+        # Insert products manually
+        product_ids = insert_manual_data(connection)
+
+        # Insert 500,000 customers
         insert_customers(connection, count=500000)
+
+        # Fetch all customer IDs to use for orders
+        cursor = connection.cursor()
+        cursor.execute("SELECT CustomerID FROM CUSTOMERS")
+        customer_ids = [row[0] for row in cursor.fetchall()]
+
+        # Insert 500,000 orders
+        insert_orders(connection, customer_ids, count=500000)
+
+        # Fetch all order IDs to use for order items
+        cursor.execute("SELECT OrderID FROM ORDERS")
+        order_ids = [row[0] for row in cursor.fetchall()]
+
+        # Insert 500,000 order items
+        insert_order_items(connection, order_ids, product_ids, count=500000)
+
+        # Close connection
         connection.close()

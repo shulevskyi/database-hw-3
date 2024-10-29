@@ -82,3 +82,5 @@ ALTER TABLE PRODUCTS MODIFY COLUMN SKU VARCHAR(50) COMMENT 'Unique Stock Keeping
 
 ALTER TABLE ORDERS COMMENT = 'This table stores information about customer orders';
 ALTER TABLE ORDERS MODIFY COLUMN Status VARCHAR(50) COMMENT 'Order status (e.g., Pending, Shipped, Delivered)';
+
+-- DELETE FROM CUSTOMERS;
