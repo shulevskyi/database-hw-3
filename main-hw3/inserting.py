@@ -9,10 +9,10 @@ import random
 load_dotenv()
 
 # Connection settings
-HOST = os.getenv('localhost')
-USER = os.getenv('root')
-PASSWORD = os.getenv('fifadg13')
-DATABASE = os.getenv('ecommerce_shop')
+HOST = os.getenv('HOST')
+USER = os.getenv('USER')
+PASSWORD = os.getenv('PASSWORD')
+DATABASE = os.getenv('DATABASE')
 
 def create_connection():
     """Create a database connection"""
