@@ -8,18 +8,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connection settings
-HOST = os.getenv('host')
-USER = os.getenv('user')
-PASSWORD = os.getenv('password')
-DATABASE = os.getenv('database')
+HOST = os.getenv('localhost')
+USER = os.getenv('ecom_user')
+PASSWORD = os.getenv('fifadg13')
+DATABASE = os.getenv('ecommerce_shop')
 
 def create_connection():
     """Create a database connection"""
     try:
         connection = mysql.connector.connect(
-            host=HOST,  # Update with your database host
-            user=USER,  # Update with your database username
-            password=PASSWORD,  # Update with your database password
+            host=HOST,
+            user=USER,
+            password=PASSWORD,
             database=DATABASE
         )
         if connection.is_connected():
