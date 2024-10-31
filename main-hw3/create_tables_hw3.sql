@@ -62,12 +62,6 @@ CREATE TABLE SHIPMENTS (
     FOREIGN KEY (OrderID) REFERENCES ORDERS(OrderID)
 ) COMMENT='Table storing shipment details for orders';
 
-
--- Add additional constraints for data integrity
--- Removing duplicate constraint
--- ALTER TABLE PRODUCTS ADD CONSTRAINT chk_price CHECK (Price > 0);
-
--- Add additional constraints for data integrity
 ALTER TABLE PRODUCTS ADD CONSTRAINT chk_price CHECK (Price > 0);
 
 ALTER TABLE ORDER_ITEMS
@@ -107,3 +101,17 @@ SELECT * FROM INVENTORY WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2'
 SHOW PROFILES;
 SET profiling = 0;
 
+-- top 3 products by sales in current month
+
+CREATE VIEW top_products AS
+SELECT
+    p.ProductID,
+    p.ProductName,
+    SUM(oi.Quantity) AS TotalSales
+FROM PRODUCTS p
+JOIN ORDER_ITEMS oi ON p.ProductID = oi.ProductID
+JOIN ORDERS o ON oi.OrderID = o.OrderID
+WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE()) AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE())
+GROUP BY p.ProductID
+ORDER BY TotalSales DESC
+LIMIT 3;
