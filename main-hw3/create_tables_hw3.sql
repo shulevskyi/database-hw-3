@@ -101,7 +101,6 @@ SELECT * FROM INVENTORY WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2'
 SHOW PROFILES;
 SET profiling = 0;
 
--- top 3 products by sales in current month
 
 CREATE VIEW top_products AS
 SELECT
@@ -114,4 +113,3 @@ JOIN ORDERS o ON oi.OrderID = o.OrderID
 WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE()) AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE())
 GROUP BY p.ProductID
 ORDER BY TotalSales DESC
-LIMIT 3;
