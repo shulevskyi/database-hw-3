@@ -83,5 +83,27 @@ ALTER TABLE PRODUCTS MODIFY COLUMN SKU VARCHAR(50) COMMENT 'Unique Stock Keeping
 ALTER TABLE ORDERS COMMENT = 'This table stores information about customer orders';
 ALTER TABLE ORDERS MODIFY COLUMN Status VARCHAR(50) COMMENT 'Order status (e.g., Pending, Shipped, Delivered)';
 
+-- Indexes
+CREATE INDEX idx_email ON CUSTOMERS (Email);
+CREATE INDEX idx_customer_id ON ORDERS (CustomerID);
+CREATE INDEX idx_order_id ON ORDER_ITEMS (OrderID);
+CREATE INDEX idx_product_id ON ORDER_ITEMS (ProductID);
+CREATE INDEX idx_inventory_product_id ON INVENTORY (ProductID);
+CREATE INDEX idx_shipment_order_id ON SHIPMENTS (OrderID);
 
+-- Indexes optimization check
+SET profiling = 1;
+SELECT * FROM CUSTOMERS IGNORE INDEX (idx_email) WHERE Email = 'customer_00003b5cc897454d86359d4420288e53@example.com';
+SELECT * FROM ORDERS IGNORE INDEX (idx_customer_id) WHERE CustomerID = '00005167-25ff-49fb-a3b0-682234ade0f9';
+SELECT * FROM ORDER_ITEMS IGNORE INDEX (idx_order_id) WHERE OrderID = '000023d4-bda7-40d4-a43a-a460e27088e2';
+SELECT * FROM INVENTORY IGNORE INDEX (idx_inventory_product_id) WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2';
+SHOW PROFILES;
+SET profiling = 0;
+SET profiling = 1;
+SELECT * FROM CUSTOMERS WHERE Email = 'customer_00003b5cc897454d86359d4420288e53@example.com';
+SELECT * FROM ORDERS WHERE CustomerID = '00005167-25ff-49fb-a3b0-682234ade0f9';
+SELECT * FROM ORDER_ITEMS WHERE OrderID = '000023d4-bda7-40d4-a43a-a460e27088e2';
+SELECT * FROM INVENTORY WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2';
+SHOW PROFILES;
+SET profiling = 0;
 
