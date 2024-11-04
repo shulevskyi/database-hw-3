@@ -112,4 +112,58 @@ JOIN ORDER_ITEMS oi ON p.ProductID = oi.ProductID
 JOIN ORDERS o ON oi.OrderID = o.OrderID
 WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE()) AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE())
 GROUP BY p.ProductID
-ORDER BY TotalSales DESC
+ORDER BY TotalSales DESC;
+
+
+
+-- trigger
+
+USE ecommerce_shop;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_inventory_last_updated
+BEFORE UPDATE ON INVENTORY
+FOR EACH ROW
+BEGIN
+    SET NEW.LastUpdated = CURRENT_TIMESTAMP;
+END$$
+
+DELIMITER ;
+
+
+
+-- procedure
+
+USE ecommerce_shop;
+
+DELIMITER $$
+
+CREATE PROCEDURE process_order(IN order_id VARCHAR(36))
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE item_product_id VARCHAR(36);
+    DECLARE item_quantity INT;
+
+    DECLARE cur CURSOR FOR
+        SELECT ProductID, Quantity FROM ORDER_ITEMS WHERE OrderID = order_id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO item_product_id, item_quantity;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- deduct the ordered quantity from the inventory
+        UPDATE INVENTORY
+        SET StockQuantity = StockQuantity - item_quantity
+        WHERE ProductID = item_product_id;
+    END LOOP;
+
+    CLOSE cur;
+END$$
+
+DELIMITER ;
