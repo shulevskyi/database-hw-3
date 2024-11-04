@@ -102,7 +102,7 @@ SHOW PROFILES;
 SET profiling = 0;
 
 
-CREATE VIEW top_products AS
+CREATE OR REPLACE VIEW top_products AS
 SELECT
     p.ProductID,
     p.ProductName,
@@ -110,7 +110,8 @@ SELECT
 FROM PRODUCTS p
 JOIN ORDER_ITEMS oi ON p.ProductID = oi.ProductID
 JOIN ORDERS o ON oi.OrderID = o.OrderID
-WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE()) AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE())
+WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+  AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
 GROUP BY p.ProductID
 ORDER BY TotalSales DESC;
 
