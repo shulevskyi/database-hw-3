@@ -117,6 +117,7 @@ ORDER BY TotalSales DESC;
 
 
 -- trigger
+-- Whenever an UPDATE operation occurs on the INVENTORY table, the trigger activates before the actual update.
 
 USE ecommerce_shop;
 
@@ -167,3 +168,6 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+# in use - CALL process_order('123e4567-e89b-12d3-a456-426614174000');
+-- trigger and update works together
