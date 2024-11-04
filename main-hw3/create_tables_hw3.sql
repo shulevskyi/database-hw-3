@@ -77,17 +77,13 @@ ALTER TABLE PRODUCTS MODIFY COLUMN SKU VARCHAR(50) COMMENT 'Unique Stock Keeping
 ALTER TABLE ORDERS COMMENT = 'This table stores information about customer orders';
 ALTER TABLE ORDERS MODIFY COLUMN Status VARCHAR(50) COMMENT 'Order status (e.g., Pending, Shipped, Delivered)';
 
--- Indexes
 
--- Keep index on Email for efficient lookups by Email
 CREATE INDEX idx_email ON CUSTOMERS (Email);
 
--- Removed indexes on ID columns as they are either primary keys (already indexed) or foreign keys
+-- primary keys (already indexed) or foreign keys
 
--- Indexes optimization check
 SET profiling = 1;
 
--- Testing query performance without indexes on ID columns
 SELECT * FROM CUSTOMERS WHERE Email = 'customer_00003b5cc897454d86359d4420288e53@example.com';
 
 SELECT * FROM ORDERS WHERE CustomerID = '00005167-25ff-49fb-a3b0-682234ade0f9';
