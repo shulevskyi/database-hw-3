@@ -65,7 +65,7 @@ def insert_manual_data(connection):
 
     return product_ids
 
-def insert_customers(connection, count=500000):
+def insert_customers(connection, count=100000):
     # Inserting data into CUSTOMERS table
     customers_query = """
     INSERT INTO CUSTOMERS (CustomerID, FirstName, LastName, Email, Phone, Address)
@@ -84,7 +84,7 @@ def insert_customers(connection, count=500000):
         )
         execute_query(connection, customers_query, data)
 
-def insert_orders(connection, customer_ids, count=500000):
+def insert_orders(connection, customer_ids, count=100000):
     # Inserting data into ORDERS table
     orders_query = """
     INSERT INTO ORDERS (OrderID, CustomerID, Status, TotalAmount)
@@ -95,7 +95,7 @@ def insert_orders(connection, customer_ids, count=500000):
     for i in range(count):
         customer_id = random.choice(customer_ids)  # Randomly select a customer ID for each order
         status = random.choice(statuses)
-        total_amount = round(random.uniform(10.0, 500.0), 2)  # Random total amount between $10 and $500
+        total_amount = round(random.uniform(10.0, 100.0), 2)  # Random total amount between $10 and $100
         data = (
             str(uuid.uuid4()),
             customer_id,
@@ -104,7 +104,7 @@ def insert_orders(connection, customer_ids, count=500000):
         )
         execute_query(connection, orders_query, data)
 
-def insert_order_items(connection, order_ids, product_ids, count=500000):
+def insert_order_items(connection, order_ids, product_ids, count=100000):
     # Inserting data into ORDER_ITEMS table
     order_items_query = """
     INSERT INTO ORDER_ITEMS (OrderItemID, OrderID, ProductID, Quantity, Price)
@@ -131,7 +131,7 @@ def insert_inventory(connection, product_ids):
     VALUES (%s, %s, %s)
     """
     for product_id in product_ids:
-        stock_quantity = random.randint(50, 500)  # Random stock quantity between 50 and 500
+        stock_quantity = random.randint(50, 100)  # Random stock quantity between 50 and 100
         data = (
             str(uuid.uuid4()),
             product_id,
@@ -163,23 +163,23 @@ if __name__ == "__main__":
         # Insert products manually
         product_ids = insert_manual_data(connection)
 
-        # Insert 500,000 customers
-        insert_customers(connection, count=500000)
+        # Insert 100,000 customers
+        insert_customers(connection, count=100000)
 
         # Fetch all customer IDs to use for orders
         cursor = connection.cursor()
         cursor.execute("SELECT CustomerID FROM CUSTOMERS")
         customer_ids = [row[0] for row in cursor.fetchall()]
 
-        # Insert 500,000 orders
-        insert_orders(connection, customer_ids, count=500000)
+        # Insert 100,000 orders
+        insert_orders(connection, customer_ids, count=100000)
 
         # Fetch all order IDs to use for order items and shipments
         cursor.execute("SELECT OrderID FROM ORDERS")
         order_ids = [row[0] for row in cursor.fetchall()]
 
-        # Insert 500,000 order items
-        insert_order_items(connection, order_ids, product_ids, count=500000)
+        # Insert 100,000 order items
+        insert_order_items(connection, order_ids, product_ids, count=100000)
 
         # Insert inventory entries for products
         insert_inventory(connection, product_ids)

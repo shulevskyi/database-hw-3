@@ -78,26 +78,22 @@ ALTER TABLE ORDERS COMMENT = 'This table stores information about customer order
 ALTER TABLE ORDERS MODIFY COLUMN Status VARCHAR(50) COMMENT 'Order status (e.g., Pending, Shipped, Delivered)';
 
 -- Indexes
+
+-- Keep index on Email for efficient lookups by Email
 CREATE INDEX idx_email ON CUSTOMERS (Email);
-CREATE INDEX idx_customer_id ON ORDERS (CustomerID);
-CREATE INDEX idx_order_id ON ORDER_ITEMS (OrderID);
-CREATE INDEX idx_product_id ON ORDER_ITEMS (ProductID);
-CREATE INDEX idx_inventory_product_id ON INVENTORY (ProductID);
-CREATE INDEX idx_shipment_order_id ON SHIPMENTS (OrderID);
+
+-- Removed indexes on ID columns as they are either primary keys (already indexed) or foreign keys
 
 -- Indexes optimization check
 SET profiling = 1;
-SELECT * FROM CUSTOMERS IGNORE INDEX (idx_email) WHERE Email = 'customer_00003b5cc897454d86359d4420288e53@example.com';
-SELECT * FROM ORDERS IGNORE INDEX (idx_customer_id) WHERE CustomerID = '00005167-25ff-49fb-a3b0-682234ade0f9';
-SELECT * FROM ORDER_ITEMS IGNORE INDEX (idx_order_id) WHERE OrderID = '000023d4-bda7-40d4-a43a-a460e27088e2';
-SELECT * FROM INVENTORY IGNORE INDEX (idx_inventory_product_id) WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2';
-SHOW PROFILES;
-SET profiling = 0;
-SET profiling = 1;
+
+-- Testing query performance without indexes on ID columns
 SELECT * FROM CUSTOMERS WHERE Email = 'customer_00003b5cc897454d86359d4420288e53@example.com';
+
 SELECT * FROM ORDERS WHERE CustomerID = '00005167-25ff-49fb-a3b0-682234ade0f9';
 SELECT * FROM ORDER_ITEMS WHERE OrderID = '000023d4-bda7-40d4-a43a-a460e27088e2';
 SELECT * FROM INVENTORY WHERE ProductID = '000023d4-bda7-40d4-a43a-a460e27088e2';
+
 SHOW PROFILES;
 SET profiling = 0;
 
@@ -110,8 +106,8 @@ SELECT
 FROM PRODUCTS p
 JOIN ORDER_ITEMS oi ON p.ProductID = oi.ProductID
 JOIN ORDERS o ON oi.OrderID = o.OrderID
-WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-  AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+WHERE MONTH(o.OrderDate) = MONTH(CURRENT_DATE)
+  AND YEAR(o.OrderDate) = YEAR(CURRENT_DATE)
 GROUP BY p.ProductID
 ORDER BY TotalSales DESC;
 
@@ -139,7 +135,6 @@ DELIMITER ;
 
 USE ecommerce_shop;
 
-DELIMITER $$
 
 CREATE PROCEDURE process_order(IN order_id VARCHAR(36))
 BEGIN
@@ -166,9 +161,13 @@ BEGIN
     END LOOP;
 
     CLOSE cur;
-END$$
+END;
 
 DELIMITER ;
 
-# in use - CALL process_order('123e4567-e89b-12d3-a456-426614174000');
+CALL process_order('000021d8-0175-4bc1-af6a-88c96ae217cd');
 -- trigger and update works together
+
+
+-- delete all rows from all tables
+
